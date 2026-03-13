@@ -7,10 +7,12 @@ deserialization of the config file itself. The config file is stored using
 the TOML format.
 """
 
+from dataclasses import dataclass
 import os
 import toml
 
 
+@dataclass
 class Conf:
     """
     Define configuration to be used across modules.
@@ -35,6 +37,17 @@ class Conf:
         'number_of_bonus_rounds': 1,
         'questions_per_bonus_round': 8
     }
+    
+    host: str
+    port: int
+    root_directory: str
+    web_directory: str
+    login_timeout: int
+    enable_admin_interface: bool
+    number_of_rounds: int
+    questions_per_round: int
+    number_of_bonus_rounds: int
+    questions_per_bonus_round: int
 
     def __init__(self):
         # Try loading config from file. If it doesn't exist, use the base conf.
@@ -45,15 +58,21 @@ class Conf:
                 toml.dump(Conf.BASE, conf)
             config = Conf.BASE
 
-        # These are 'internal' settings. They're here for easy access,
-        # but they do not get written to the config file, as their value
-        # is based upon the rest of the settings.
-        config['template_directory'] = os.path.join(config['web_directory'], "templates/")
-        config['static_directory'] = os.path.join(config['web_directory'], "static/")
-
         # Set config as attributes.
         for key, value in config.items():
             setattr(self, key, value)
+    
+    @property
+    def template_directory(self) -> str:
+        return os.path.join(self.web_directory, "templates/")
+    
+    @property
+    def static_directory(self) -> str:
+        return os.path.join(self.web_directory, "static/")
+    
+    @property
+    def storage_directory(self) -> str:
+        return os.path.join(self.root_directory, "storage/")
 
 # Instantiate config. This variable is the item that gets
 # imported by everything else.

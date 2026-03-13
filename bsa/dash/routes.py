@@ -12,6 +12,7 @@ from orm.team import TeamExists
 from datetime import datetime
 from passlib.hash import bcrypt
 import sanic
+from sanic import response, exceptions
 from sanic_jinja2 import SanicJinja2 as jinja
 import uuid
 
@@ -24,8 +25,8 @@ def require_auth(redirect=True):
         async def wrapper(request):
             if not request.ctx.session.get('username'):
                 if redirect is True:
-                    return sanic.response.redirect("/login")
-                raise sanic.exceptions.Forbidden("You are not authorized to access this information.")
+                    return response.redirect("/login")
+                raise exceptions.Forbidden("You are not authorized to access this information.")
 
             if request.ctx.session.get('ID') != Judge.obtain(request.ctx.session.get('username')).sessionID:
                 raise KeyError
@@ -108,7 +109,22 @@ async def total_GET(request):
 @jinja.template("export.html")
 async def export_GET(request):
     """Handle GET requests for /export"""
-    return {'placement': Judge.placement(), 'judges': Judge.obtainall()}
+    judges = Judge.obtainall()
+    team_score_data = {}
+    questions = []
+    for judge in judges:
+        for round_name, round_data in judge.scoretable.items():
+            for question, scores in round_data.items():
+                if question not in questions:
+                    questions.append(question)
+                for team, score in scores.items():
+                    if team not in team_score_data:
+                        team_score_data[team] = {}
+                        
+                    team_score_data[team][question] = score
+
+    return {'placement': Judge.placement(), 'judges': judges, 'team_scores': team_score_data, 'questions': questions}
+
 
 
 @routes.get("/admin")

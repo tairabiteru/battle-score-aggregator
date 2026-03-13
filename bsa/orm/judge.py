@@ -7,8 +7,6 @@ from marshmallow import Schema, fields, post_load
 import os
 
 
-conf.storage_directory = os.path.join(conf.root_directory, "storage/")
-
 if not os.path.exists(conf.storage_directory):
     os.makedirs(conf.storage_directory)
 

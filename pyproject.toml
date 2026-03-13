@@ -1,24 +1,17 @@
-[tool.poetry]
-name = "bsa"
-version = "1.0"
+[project]
+name = "battle-score-aggregator"
+version = "1.1"
 description = "A Battle of the Books scoring system for the Northville District Library."
-authors = ["Taira <tairabiteru@users.noreply.github.com>"]
-license = "GNU General Public License v3.0"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-sanic = "^22.12.0"
-sanic-session = "^0.8.0"
-sanic-jinja2 = "^2022.11.11"
-jinja2 = "^3.1.2"
-coloredlogs = "^15.0.1"
-toml = "^0.10.2"
-marshmallow = "^3.19.0"
-passlib = "^1.7.4"
-bcrypt = "^4.0.1"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires-python = ">=3.14"
+dependencies = [
+    "bcrypt==4.3.0",
+    "coloredlogs>=15.0.1",
+    "jinja2>=3.1.6",
+    "marshmallow>=4.2.2",
+    "passlib>=1.7.4",
+    "sanic>=25.12.0",
+    "sanic-jinja2>=2022.11.11",
+    "sanic-sessions>=0.9.0",
+    "toml>=0.10.2",
+]

@@ -30,8 +30,33 @@
       No teams have been created yet.
     {% endif %}
   </div>
+
+  <div id="teams-content">
+    {% if placement %}
+      <table id="teamstable">
+        <tr>
+          <th>Question</th>
+
+          {% for question in questions %}
+          <th>{{ question }}</th>
+          {% endfor %}
+        
+          {% for team, scores in team_scores.items() %}
+          <tr>
+            <td>{{ team }}</td>
+            {% for question, score in scores.items() %}
+              <td>{{ score }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+      </table>
+    {% else %}
+      No teams have been created yet.
+    {% endif %}
+  </div>
   <br>
-  <a id="download">Export Totals as HTML</a>
+  <a id="download">Export Totals as HTML</a><br>
+  <a id="download-teams">Export Individual Teams as CSV</a>
   <br><br><br>
 
   {% for judge in judges %}

@@ -15,7 +15,7 @@ import coloredlogs
 import jinja2
 import logging
 import sanic
-import sanic_session
+import sanic_sessions
 import sanic_jinja2
 
 
@@ -29,19 +29,19 @@ coloredlogs.install(
 
 class Dash:
     @staticmethod
-    def create_app(name):
+    def create_app(name) -> sanic.Sanic:
         app = sanic.Sanic("BSA")
         app.static("/static", conf.static_directory)
 
         loader = jinja2.FileSystemLoader(conf.template_directory)
-        sanic_session.Session(
+        sanic_sessions.Session(
             app,
-            interface=sanic_session.InMemorySessionInterface()
+            interface=sanic_sessions.InMemorySessionInterface()
         )
         app.ctx.jinja = sanic_jinja2.SanicJinja2(app, loader=loader)
 
         for jinjafilter in jinjafilters:
-            app.ctx.jinja.add_end(jinjafilter.__name__, jinjafilter, scope="filters")
+            app.ctx.jinja.add_env(jinjafilter.__name__, jinjafilter, scope="filters")
         
         app.blueprint(routes)
 
@@ -51,18 +51,3 @@ class Dash:
             judge.save()
 
         return app
-
-    # @classmethod
-    # def run(cls):
-    #     if conf.enable_admin_interface:
-    #         logger.warning("!!! WARNING !!! ~~ ADMIN INTERFACE IS ENABLED! ~~ !!! WARNING !!!")
-    #         logger.warning("The admin interface should NEVER be enabled during production!")
-    #         logger.warning("If you are in production, shut down IMMEDIATELY and change the config.")
-
-    #     dash = cls()
-    #     dash.app.run(
-    #         host=conf.host,
-    #         port=conf.port,
-    #         access_log=False,
-    #         debug=False
-    #     )
